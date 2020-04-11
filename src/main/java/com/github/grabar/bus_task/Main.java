@@ -12,13 +12,11 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        //String filePath = readConsoleLine();
-        String filePath = ".\\src\\main\\resources\\input.txt";
+        String filePath = readConsoleLine();
         List<String> data = DataReader.readFile(filePath);
         List<Bus> buses = new BusParser().parse(data);
         List<Bus> effectiveBuses = new BusServiceImpl().getEffectiveBuses(buses);
         effectiveBuses.sort(new BusComparator());
-        //System.out.println(effectiveBuses);
         BusWriter.writeToTxtFile(effectiveBuses);
     }
 
