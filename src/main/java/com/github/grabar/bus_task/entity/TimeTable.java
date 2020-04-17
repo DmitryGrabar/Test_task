@@ -1,6 +1,7 @@
 package com.github.grabar.bus_task.entity;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class TimeTable {
 
@@ -34,6 +35,20 @@ public class TimeTable {
 
     public void setArrival(LocalTime arrival) {
         this.arrival = arrival;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeTable)) return false;
+        TimeTable timeTable = (TimeTable) o;
+        return departure.equals(timeTable.departure) &&
+                arrival.equals(timeTable.arrival);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(departure, arrival);
     }
 
     @Override

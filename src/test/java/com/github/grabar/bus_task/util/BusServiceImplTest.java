@@ -35,4 +35,19 @@ public class BusServiceImplTest {
         resultList.sort(Comparator.comparing(bus -> bus.getTimeTable().getDeparture()));
         Assert.assertEquals(correctList,resultList);
     }
+
+    @Test
+    public void testGetEffectiveBusesFromCustomer() {
+        Bus bus1 = new Bus(CompanyName.POSH, new TimeTable("10:12", "11:11"));
+        Bus bus2 = new Bus(CompanyName.POSH, new TimeTable("12:12", "13:11"));
+        Bus bus3 = new Bus(CompanyName.POSH, new TimeTable("10:00", "10:59"));
+        Bus bus4 = new Bus(CompanyName.POSH, new TimeTable("10:01", "10:02"));
+
+        List<Bus> buses = Arrays.asList(bus1, bus2, bus3, bus4);
+        List<Bus> correctList = Arrays.asList(bus4, bus1, bus2);
+        List<Bus> resultList = busServiceImpl.getEffectiveBuses(buses);
+
+        resultList.sort(Comparator.comparing(bus -> bus.getTimeTable().getDeparture()));
+        Assert.assertEquals(correctList, resultList);
+    }
 }
