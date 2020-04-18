@@ -20,30 +20,34 @@ public class BusServiceImpl implements BusService {
         while (iterator.hasNext()) {
             Bus bus = iterator.next();
             long timeDiff = getTimeDiff(bus.getTimeTable());
-            if (timeDiff > 0 && timeDiff < EFFECTIVE_TIME) {
-                LocalTime depTime = bus.getTimeTable().getDeparture();
-                LocalTime arrTime = bus.getTimeTable().getArrival();
-                for (Bus secondBus : tempList) {
-                    if (bus.equals(secondBus)) {
-                        continue;
-                    } else if (bus.getTimeTable().equals(secondBus.getTimeTable()) && !bus.getCompanyName().equals(secondBus.getCompanyName())) {
-                        if (bus.getCompanyName().equals(CompanyName.GROTTY)) {
-                            iterator.remove();
-                        }
-                        break;
-                    }
-                    boolean isDepartureTimeBefore = !depTime.isAfter(secondBus.getTimeTable().getDeparture());
-                    boolean isArrivalTimeAfter = !arrTime.isBefore(secondBus.getTimeTable().getArrival());
-                    if (isDepartureTimeBefore && isArrivalTimeAfter) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            } else {
+            if (timeDiff <= 0 || timeDiff >= EFFECTIVE_TIME) {
                 iterator.remove();
+                continue;
             }
+            removeLessEffectiveBus(tempList, iterator, bus);
         }
         return new ArrayList<>(tempList);
+    }
+
+    private void removeLessEffectiveBus(LinkedList<Bus> tempList, ListIterator<Bus> iterator, Bus bus) {
+        LocalTime depTime = bus.getTimeTable().getDeparture();
+        LocalTime arrTime = bus.getTimeTable().getArrival();
+        for (Bus secondBus : tempList) {
+            if (bus.equals(secondBus)) {
+                continue;
+            }
+            if (bus.getCompanyName().equals(secondBus.getCompanyName())){
+                boolean isDepartureTimeBefore = !depTime.isAfter(secondBus.getTimeTable().getDeparture());
+                boolean isArrivalTimeAfter = !arrTime.isBefore(secondBus.getTimeTable().getArrival());
+                if (isDepartureTimeBefore && isArrivalTimeAfter) {
+                    iterator.remove();
+                    break;
+                }
+            } else if (bus.getCompanyName().equals(CompanyName.GROTTY) && bus.getTimeTable().equals(secondBus.getTimeTable())){
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     @Override
